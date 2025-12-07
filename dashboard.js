@@ -11,9 +11,9 @@ var password = "Trialxtreme3";
 
 // --- MQTT Topics (MUST match ESP32 code exactly) ---
 const GROUP_ID = "GROUP_MIGOL"; 
-const DATA_TOPIC = "esp32/weather/data/" + GROUP_ID;
-const LED_CONTROL_TOPIC = "esp32/control/led/" + GROUP_ID;
-const BUZZER_CONTROL_TOPIC = "esp32/control/buzzer/" + GROUP_ID;
+const DATA_TOPIC = "esp32/weather/data/GROUP_MIGOL";
+const LED_CONTROL_TOPIC = "esp32/control/led/GROUP_MIGOL";
+const BUZZER_CONTROL_TOPIC = "esp32/control/buzzer/GROUP_MIGOL";
 
 // Initialize MQTT Client
 var client = new Paho.MQTT.Client(hostname, Number(port), "/mqtt", clientId);
@@ -54,11 +54,14 @@ function onMessageArrived(message) {
             var data = JSON.parse(message.payloadString);
             
             // Update the HTML display elements 
-            document.getElementById("temp-val").innerText = data.temp ? data.temp.toFixed(1) : '--';
-            document.getElementById("hum-val").innerText = data.hum ? data.hum.toFixed(1) : '--';
-            document.getElementById("wind-val").innerText = data.wind ? data.wind.toFixed(2) : '--';
-            document.getElementById("rain-val").innerText = data.rain ? data.rain.toFixed(2) : '--';
-            document.getElementById("light-val").innerText = data.light; 
+            document.getElementById("temp-val").innerText = data.temp !== undefined ? data.temp.toFixed(1) : '--';
+            document.getElementById("hum-val").innerText = data.hum !== undefined ? data.hum.toFixed(1) : '--';
+            document.getElementById("wind-val").innerText = data.wind !== undefined ? data.wind.toFixed(2) : '--';
+            document.getElementById("rain-val").innerText = data.rain !== undefined ? data.rain.toFixed(2) : '--';
+            document.getElementById("light-val").innerText = data.light !== undefined ? data.light : '--';
+            
+            // ✅ New Pressure card update
+            document.getElementById("pressure-val").innerText = data.pressure !== undefined ? data.pressure.toFixed(1) : '--';
             
         } catch (e) {
             console.error("Error parsing JSON payload:", e);
