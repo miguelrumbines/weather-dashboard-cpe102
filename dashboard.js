@@ -1,35 +1,24 @@
-// --- Configuration (Based on ESP32 code) ---
-// Note: We use the TLS Host but must connect to the secured WebSocket Port (8884) for the browser.
-// If 8884 fails, check your HiveMQ console for the correct WebSocket port.
+// --- Configuration (Verify Host/Port/Credentials) ---
 var hostname = "c401a8412f77447a8ad1456fbf53d6e1.s1.eu.hivemq.cloud";
 var port = 8884; // Secured WebSocket Port from HiveMQ Console
 var clientId = "WebClient-" + parseInt(Math.random() * 10000, 10); 
-
-// Credentials from the Access Management (migol/trialxtreme3):
 var username = "migol";
 var password = "Trialxtreme3"; 
 
 // --- MQTT Topics (MUST match ESP32 code exactly) ---
 const GROUP_ID = "GROUP_MIGOL"; 
-const DATA_TOPIC = "esp32/weather/data/GROUP_MIGOL";
-const LED_CONTROL_TOPIC = "esp32/control/led/GROUP_MIGOL";
-const BUZZER_CONTROL_TOPIC = "esp32/control/buzzer/GROUP_MIGOL";
+const DATA_TOPIC = "esp32/weather/data/" + GROUP_ID;
+const LED_CONTROL_TOPIC = "esp32/control/led/" + GROUP_ID;
+const BUZZER_CONTROL_TOPIC = "esp32/control/buzzer/" + GROUP_ID;
 
 // Initialize MQTT Client
 var client = new Paho.MQTT.Client(hostname, Number(port), "/mqtt", clientId);
 
 client.onConnectionLost = onConnectionLost;
 client.onMessageArrived = onMessageArrived;
+client.connect({ onSuccess: onConnect, useSSL: true, userName: username, password: password }); 
 
-// Connect with credentials and SSL
-client.connect({ 
-    onSuccess: onConnect, 
-    useSSL: true, 
-    userName: username,
-    password: password 
-}); 
-
-var ledState = false; // Tracks the local state of the LED
+var ledState = false; 
 
 // ---------------- CONNECTION HANDLERS ----------------
 
@@ -53,15 +42,16 @@ function onMessageArrived(message) {
         try {
             var data = JSON.parse(message.payloadString);
             
-            // Update the HTML display elements 
-            document.getElementById("temp-val").innerText = data.temp !== undefined ? data.temp.toFixed(1) : '--';
-            document.getElementById("hum-val").innerText = data.hum !== undefined ? data.hum.toFixed(1) : '--';
-            document.getElementById("wind-val").innerText = data.wind !== undefined ? data.wind.toFixed(2) : '--';
-            document.getElementById("rain-val").innerText = data.rain !== undefined ? data.rain.toFixed(2) : '--';
-            document.getElementById("light-val").innerText = data.light !== undefined ? data.light : '--';
+            // Update all sensor readings
+            document.getElementById("temp-val").innerText = data.temp ? data.temp.toFixed(1) : '--';
+            document.getElementById("hum-val").innerText = data.hum ? data.hum.toFixed(1) : '--';
+            document.getElementById("pres-val").innerText = data.pressure ? data.pressure.toFixed(1) : '--';
+            document.getElementById("light-val").innerText = data.light; 
+            document.getElementById("wind-val").innerText = data.wind ? data.wind.toFixed(2) : '--';
+            document.getElementById("rain-val").innerText = data.rain ? data.rain.toFixed(2) : '--';
             
-            // ✅ New Pressure card update
-            document.getElementById("pressure-val").innerText = data.pressure !== undefined ? data.pressure.toFixed(1) : '--';
+            // --- NEW: Update Wind Direction ---
+            document.getElementById("dir-val").innerText = data.dir || 'N/A';
             
         } catch (e) {
             console.error("Error parsing JSON payload:", e);
@@ -89,19 +79,17 @@ function toggleLED() {
 
     publishCommand(LED_CONTROL_TOPIC, command);
     
-    // Update dashboard button appearance 
     if (ledState) {
         button.innerText = "Turn OFF";
-        button.classList.remove("off");
-        button.classList.add("on");
+        button.classList.remove("btn-warning");
+        button.classList.add("btn-success");
     } else {
         button.innerText = "Turn ON";
-        button.classList.remove("on");
-        button.classList.add("off");
+        button.classList.remove("btn-success");
+        button.classList.add("btn-warning");
     }
 }
 
 function sendBuzzerCommand(command) {
-    // command is "ALERT" or "SILENCE"
     publishCommand(BUZZER_CONTROL_TOPIC, command);
 }

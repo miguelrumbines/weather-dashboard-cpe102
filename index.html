@@ -9,14 +9,21 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
     
+    <link rel="stylesheet" href="style.css"> 
+    
     <style>
         .reading {
             font-size: 2.5rem;
             font-weight: 700;
             color: #198754; /* Bootstrap success green */
         }
+        .direction-reading {
+            font-size: 2.0rem;
+            font-weight: 700;
+            color: #ffc107; /* Bootstrap warning yellow */
+        }
         .card-title {
-            color: #0d6efd; /* Bootstrap primary blue */
+            color: #0d6efd;
         }
     </style>
 </head>
@@ -30,68 +37,29 @@
         <section id="monitoring">
             <h2 class="mb-4">Real-Time Sensor Readings</h2>
             
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-  <div class="col">
-    <div class="card shadow h-100">
-      <div class="card-body text-center">
-        <h5 class="card-title">Temperature</h5>
-        <div class="reading" id="temp-val">--</div>
-        <div class="unit text-muted">°C</div>
-      </div>
-    </div>
-  </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                
+                <div class="col"><div class="card shadow h-100"><div class="card-body text-center"><h5 class="card-title">Temperature</h5><div class="reading" id="temp-val">--</div><div class="unit text-muted">°C</div></div></div></div>
+                
+                <div class="col"><div class="card shadow h-100"><div class="card-body text-center"><h5 class="card-title">Humidity</h5><div class="reading" id="hum-val">--</div><div class="unit text-muted">%</div></div></div></div>
+                
+                <div class="col"><div class="card shadow h-100"><div class="card-body text-center"><h5 class="card-title">Pressure</h5><div class="reading" id="pres-val">--</div><div class="unit text-muted">hPa</div></div></div></div>
+                
+                <div class="col"><div class="card shadow h-100"><div class="card-body text-center"><h5 class="card-title">Light Level</h5><div class="reading" id="light-val">--</div><div class="unit text-muted">ADC</div></div></div></div>
 
-  <div class="col">
-    <div class="card shadow h-100">
-      <div class="card-body text-center">
-        <h5 class="card-title">Humidity</h5>
-        <div class="reading" id="hum-val">--</div>
-        <div class="unit text-muted">%</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col">
-    <div class="card shadow h-100">
-      <div class="card-body text-center">
-        <h5 class="card-title">Wind Speed</h5>
-        <div class="reading" id="wind-val">--</div>
-        <div class="unit text-muted">m/s</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col">
-    <div class="card shadow h-100">
-      <div class="card-body text-center">
-        <h5 class="card-title">Rainfall</h5>
-        <div class="reading" id="rain-val">--</div>
-        <div class="unit text-muted">mm</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col">
-    <div class="card shadow h-100">
-      <div class="card-body text-center">
-        <h5 class="card-title">Light Level</h5>
-        <div class="reading" id="light-val">--</div>
-        <div class="unit text-muted">ADC</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ✅ New Pressure Card -->
-  <div class="col">
-    <div class="card shadow h-100">
-      <div class="card-body text-center">
-        <h5 class="card-title">Pressure</h5>
-        <div class="reading" id="pressure-val">--</div>
-        <div class="unit text-muted">hPa</div>
-      </div>
-    </div>
-  </div>
-</div>
+                <div class="col"><div class="card shadow h-100"><div class="card-body text-center"><h5 class="card-title">Wind Speed</h5><div class="reading" id="wind-val">--</div><div class="unit text-muted">m/s</div></div></div></div>
+                
+                <div class="col"><div class="card shadow h-100"><div class="card-body text-center"><h5 class="card-title">Rainfall</h5><div class="reading" id="rain-val">--</div><div class="unit text-muted">mm</div></div></div></div>
+                
+                <div class="col-12 col-lg-4 mx-auto">
+                    <div class="card shadow h-100 bg-light"><div class="card-body text-center">
+                        <h5 class="card-title">Wind Direction</h5>
+                        <div class="direction-reading" id="dir-val">--</div>
+                        <div class="unit text-muted">Cardinal</div>
+                    </div></div>
+                </div>
+                
+            </div>
         </section>
 
         <hr class="my-5">
